@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(CLIENT_SOURCE
 	client/main.cpp
+	client/client.cpp
 )
 
 # client code

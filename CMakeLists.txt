@@ -14,7 +14,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
 
 
 # Boost
-find_package(Boost COMPONENTS program_options filesystem system)
+find_package(Boost COMPONENTS program_options filesystem system context coroutine)
 if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
 endif()
