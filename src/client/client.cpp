@@ -1,29 +1,37 @@
 #include "client/client.hpp"
 
-client::client(boost::asio::io_service& io_service, std::string host, short port) :
+client::client(boost::asio::io_service& io_service, std::string host, std::string port) :
 _socket(io_service),
 _host(std::move(host)),
-_port(port) {
+_port(std::move(port)),
+_resolver(io_service) {
 
 }
 
 void client::start() {
-//	boost::asio::spawn(_socket.get_io_service(), [this] (boost::asio::yield_context yield) {
-//		do_resolve(yield);
-//	});
-
-	boost::asio::spawn(_socket.get_io_service(), boost::bind(do_resolve, this, _1));
+	std::cout << "Resolving " << _host << ":" << _port << std::endl;
+	boost::asio::ip::tcp::resolver::query query(_host, _port);
+	_resolver.async_resolve(
+	query,
+	boost::bind(&client::handle_resolve, this,
+	boost::asio::placeholders::error,
+	boost::asio::placeholders::iterator));
 }
 
 void client::stop() {
 
 }
 
-void client::do_resolve(boost::asio::yield_context& yield) {
-//	boost::asio::ip::tcp::resolver::async_resolve({boost::asio::ip::tcp::v4(), _host, _port}, yield);
-//	boost::asio::spawn(_io_service, [this] (boost::asio::yield_context yield) {
-//		do_connect();
-//	});
+void client::handle_resolve(const boost::system::error_code& err, boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
+	if(!err) {
+		std::cout << "Endpoint list: " << std::endl;
+		do {
+			std::cout << endpoint_iterator->endpoint() << std::endl;
+			endpoint_iterator++;
+		} while (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator());
+	} else {
+		std::cerr << "Error code: " << err.message() << std::endl;
+	}
 }
 
 void client::do_connect() {

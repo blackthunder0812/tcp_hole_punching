@@ -12,14 +12,15 @@ class client {
 	private:
 		boost::asio::ip::tcp::socket _socket;
 		std::string _host;
-		short _port;
+		std::string _port;
+		boost::asio::ip::tcp::resolver _resolver;
 
-		void do_resolve(boost::asio::yield_context& yield);
+		void handle_resolve(const boost::system::error_code& err, boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
 		void do_connect();
 		void do_read();
 		void do_write();
 	public:
-		client(boost::asio::io_service& io_service, std::string host, short port);
+		client(boost::asio::io_service& io_service, std::string host, std::string port);
 		void start();
 		void stop();
 };
