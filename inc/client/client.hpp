@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <memory>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/spawn.hpp>
@@ -14,9 +13,12 @@ class client {
 		std::string _host;
 		std::string _port;
 		boost::asio::ip::tcp::resolver _resolver;
+		boost::asio::ip::tcp::resolver::iterator _resolver_result;
 
+		void do_resolve(boost::asio::yield_context yield);
 		void handle_resolve(const boost::system::error_code& err, boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
-		void do_connect();
+		void do_connect(boost::asio::yield_context yield);
+		void handle_connect(const boost::system::error_code& err, boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
 		void do_read();
 		void do_write();
 	public:
